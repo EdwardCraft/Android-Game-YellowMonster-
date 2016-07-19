@@ -10,13 +10,19 @@ import com.badlogic.gdx.math.Vector2;
 public class Constants {
 
     public static final Color BACKGRAOUND_COLOR = Color.BLACK;
-    public static final float WOLRD_SIZE = 125;
+    public static final float WOLRD_SIZE = 150;
+    public static final float STARTING_POINT = 50f;
+
     //Beta
+    public static final float BACKGROUND_WIDTH = 228 + 25;
+    public static final float BACKGROUND_HEIGHT = 128 + 25;
+
 
     //HUD
     public static final float HUD_FONT_REFERENCE_SCREEN_SIZE = 270.0f;
     public static final float HUD_MARGIN = 10.0f;
     public static final String HUD_SCORE_LEBEl = "SCORE: ";
+    public static final float HUD_SPRITE_SIZE = 20;
 
     //world
     public static final float ACCELEROMETER_SENSITIVITY = 0.5f;
@@ -25,12 +31,12 @@ public class Constants {
     public static final float  DIAMONDS_SPAWN_PER_SECOND = 2f;
     public static final float ICICLES_LOOP_ANIMATION = .09f;
     public static final float BACKGROUND_ICICLE_FRAME_DURATION = 0.05f;
-    public static final Vector2 KNOCKBACK_VELOCITY = new Vector2(120, 120);
+
 
     //DIFFICULTY SCREEN
-    public static final Color EASY_COLOR = new Color(0.2f, 0.2f, 1, 1);
-    public static final Color MEDIUM_COLOR = new Color(0.5f, 0.5f, 1, 1);
-    public static final Color HARD_COLOR = new Color(0.7f, 0.7f, 1, 1);
+    public static final Color EASY_COLOR = Color.CORAL;
+    public static final Color MEDIUM_COLOR = Color.FOREST;
+    public static final Color HARD_COLOR = Color.MAGENTA;
     public static final float DIFFICULTY_WORLD_SIZE = 480.0f;
     public static final float DIFFICULTY_BUBBLE_RADIUS = DIFFICULTY_WORLD_SIZE / 9;
     public static final float DIFFICULTY_lABEL_SCALE = .15f;
@@ -40,8 +46,11 @@ public class Constants {
 
 
     // Chun
+    public static final Vector2 KNOCKBACK_VELOCITY = new Vector2(160, 180);
     public static final Vector2 CHUN_EYE_POSITION = new Vector2(16, 24);
-    public static final int CHUN_LIVES = 3;
+    public static final float YELLOW_BALL_WIDTH = 17;
+    public static final float YELLOW_BALL_HEIGHT = 17;
+    public static final int CHUN_LIVES = 5;
     public static final float WALK_LOOP_FRAME_DURATION = 0.09f;
     public static final float CHUN_EYE_HEIGHT = 24.0f;
     public static final float CHUN_STANCE_WIDTH = 21.0f;
@@ -50,9 +59,10 @@ public class Constants {
     public static final float MAX_JUMP_DURATiON = .1f;
     public static final float JUMP_SPEED = 1.5f * WOLRD_SIZE;
     public static final float CHUN_STANDING_LOOP_DURATION = 0.05f;
-    public static final float TO_BALL_LOOP_DURATION = 0.05f;
-    public static final float ROLL_BALL_LOOP_ANIMATION = 0.05f;
+    public static final float TO_BALL_LOOP_DURATION = 0.025f;
+    public static final float ROLL_BALL_LOOP_ANIMATION = 0.03f;
     public static final float HIT_BALL_LOOP_DURATION = 0.4f;
+
 
     // Enemy
 

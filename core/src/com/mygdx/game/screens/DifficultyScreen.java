@@ -36,7 +36,7 @@ public class DifficultyScreen extends InputAdapter implements Screen{
     BitmapFont font;
     Texture background;
     Texture ice;
-    Animation standingAnimation;
+    Animation standingAnimationSprites;
     TextureRegion chun;
     float startTime;
     public DifficultyScreen(DogeMania dogeMania){
@@ -55,19 +55,50 @@ public class DifficultyScreen extends InputAdapter implements Screen{
         font.getData().setScale(Constants.DIFFICULTY_lABEL_SCALE);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         background =new Texture(Constants.BETA_LEVEL_1);
+        background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         ice = new Texture(Constants.ICICLES_SPRITE_1);
+        ice.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        getSpritesYellowBall();
 
-        Array<TextureRegion> standingSprites = new Array<TextureRegion>();
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_IDLE_SPRITE_1)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_IDLE_SPRITE_2)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_IDLE_SPRITE_3)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_IDLE_SPRITE_4)));
-        standingAnimation = new Animation(Constants.CHUN_STANDING_LOOP_DURATION,standingSprites,PlayMode.LOOP);
 
 
 
         startTime = TimeUtils.nanoTime();
     }
+
+
+    private void getSpritesYellowBall(){
+        Array<TextureRegion> standingSprites = new Array<TextureRegion>();
+
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_1)));
+        standingSprites.get(0).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_2)));
+        standingSprites.get(1).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_3)));
+        standingSprites.get(2).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_4)));
+        standingSprites.get(3).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_5)));
+        standingSprites.get(4).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_4)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_3)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_2)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_1)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_6)));
+        standingSprites.get(5).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_7)));
+        standingSprites.get(6).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_8)));
+        standingSprites.get(7).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_9)));
+        standingSprites.get(8).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_8)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_7)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_6)));
+
+        standingAnimationSprites = new Animation(Constants.CHUN_STANDING_LOOP_DURATION,standingSprites,PlayMode.LOOP);
+    }
+
 
     @Override
     public void render(float delta) {
@@ -82,19 +113,25 @@ public class DifficultyScreen extends InputAdapter implements Screen{
         batch.draw(
                 background,
                 0,
-                0
+                0,
+                Constants.BACKGROUND_WIDTH,
+                Constants.BACKGROUND_HEIGHT
         );
         batch.draw(
                 ice,
                 0,
-                0
+                0,
+                Constants.BACKGROUND_WIDTH,
+                Constants.BACKGROUND_HEIGHT
         );
         float timeInSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - startTime);
-        chun = standingAnimation.getKeyFrame(timeInSeconds);
+        chun = standingAnimationSprites.getKeyFrame(timeInSeconds);
         batch.draw(
                 chun,
+                Constants.STARTING_POINT,
                 0,
-                0
+                -Constants.YELLOW_BALL_WIDTH,
+                Constants.YELLOW_BALL_HEIGHT
 
         );
 

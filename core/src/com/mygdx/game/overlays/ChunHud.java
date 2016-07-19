@@ -16,10 +16,12 @@ public class ChunHud {
     Viewport viewport;
     Texture standingRight;
 
-        public ChunHud(Viewport viewport, BitmapFont font){
+    public ChunHud(Viewport viewport, BitmapFont font){
         this.viewport = viewport;
         this.font = font;
-        standingRight = new Texture(Constants.STANDING_RIGHT);
+        standingRight = new Texture(Constants.ROLL_SPRITE_1);
+        standingRight.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
     }
 
     public void render(SpriteBatch batch, int lives, int score){
@@ -28,13 +30,15 @@ public class ChunHud {
         font.draw(batch, hudString, Constants.HUD_MARGIN, viewport.getWorldHeight() - Constants.HUD_MARGIN);
         for(int i = 1; i <= lives; i++){
            Vector2 drawPosition = new Vector2(
-                    viewport.getWorldWidth() - i * (Constants.HUD_MARGIN / 2 + standingRight.getWidth()),
-                    viewport.getWorldHeight() - Constants.HUD_MARGIN - standingRight.getHeight()
+                    viewport.getWorldWidth() - i * (Constants.HUD_MARGIN / 2 + Constants.HUD_SPRITE_SIZE),
+                    viewport.getWorldHeight() - Constants.HUD_MARGIN - Constants.HUD_SPRITE_SIZE + 5
             );
             batch.draw(
                     standingRight,
                     drawPosition.x,
-                    drawPosition.y
+                    drawPosition.y,
+                    Constants.HUD_SPRITE_SIZE,
+                    Constants.HUD_SPRITE_SIZE
             );
         }
 

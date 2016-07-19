@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -30,12 +31,15 @@ public class Level {
     public Level(ExtendViewport viewport,Difficulty difficulty){
         this.difficulty = difficulty;
         coins = new Coins(viewport,this);
-        chun = new Chun(new Vector2(14 ,Constants.CHUN_EYE_HEIGHT), viewport,this);
+        chun = new Chun(new Vector2(Constants.STARTING_POINT ,Constants.CHUN_EYE_HEIGHT), viewport,this);
         enemies = new Enemies();
         enemies.init(viewport, difficulty, this);
         beta = new Texture(Constants.BETA_LEVEL_1);
+        beta.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         iciclesNOanimation = new Texture(Constants.ICICLES_SPRITE_1);
+        iciclesNOanimation.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         iciclesHitAnimation = new Texture(Constants.ICICLES_SPRITE_2);
+        iciclesHitAnimation.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 
     public void update(float delta){
@@ -52,7 +56,9 @@ public class Level {
         batch.draw(
                 beta,
                 0,
-                0
+                0,
+                Constants.BACKGROUND_WIDTH,
+                Constants.BACKGROUND_HEIGHT
         );
         if(chun.getCollisionChun() == HIT.YES){
             beta1 = iciclesHitAnimation;
@@ -62,7 +68,9 @@ public class Level {
         batch.draw(
                 beta1,
                 0,
-                0
+                0,
+                Constants.BACKGROUND_WIDTH,
+                Constants.BACKGROUND_HEIGHT
         );
         coins.render(batch);
         enemies.render(batch);

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.particles.influencers.ColorInfluencer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -21,6 +22,8 @@ import com.mygdx.game.util.Enums.HIT;
 import com.mygdx.game.util.Enums.JumpState;
 import com.badlogic.gdx.Application;
 
+import java.sql.Time;
+import java.util.Random;
 
 
 /**
@@ -41,19 +44,22 @@ public class Chun {
     TextureRegion updateBatch;
     TextureRegion toBallBatch;
     TextureRegion rollBatch;
+    TextureRegion hitBatch;
 
-
-    Animation walkRigthAnimation;
-    Animation walkLeftAnimation;
     Animation standingAnimationSprites;
     Animation toBallAnimation;
+    Animation toStandingAnimation;
     Animation rollBallAnimation;
-    Animation hitBallLeftAnimation;
+    Animation hitAnimation;
+
 
     long walkStartime;
     long startJump;
+
     private float toBallStartTime;
     private float rollingStartTime;
+    private float toStandingStartTime;
+    private float hitStartTime;
 
     Level level;
 
@@ -65,7 +71,8 @@ public class Chun {
 
     private Boolean done;
     private Boolean done1;
-
+    private Boolean done2;
+    private Boolean done3;
 
     int hits;
     int score;
@@ -78,6 +85,8 @@ public class Chun {
         velocity = new Vector2();
         done = false;
         done1 = false;
+        done2 = false;
+        done3 = false;
         walkStartime = TimeUtils.nanoTime();
         getAnimationFrames();
         init();
@@ -102,6 +111,7 @@ public class Chun {
         idleSprites();
         toBallSprites();
         ballSprites();
+        hitSpritesAnimation();
 
     }
 
@@ -160,6 +170,7 @@ public class Chun {
         }
 
         toBallAnimation = new Animation(Constants.TO_BALL_LOOP_DURATION, toBallSprites, PlayMode.NORMAL);
+        toStandingAnimation = toBallAnimation;
 
 
 
@@ -192,7 +203,18 @@ public class Chun {
 
         rollBallAnimation = new Animation(Constants.ROLL_BALL_LOOP_ANIMATION, ballSprites, PlayMode.LOOP);
 
+    }
 
+
+    private void hitSpritesAnimation(){
+        Array<TextureRegion> hitSprites = new Array<TextureRegion>();
+        hitSprites.add(new TextureRegion(new Texture(Constants.BALL_HIT_SPRITE_1)));
+        hitSprites.add(new TextureRegion(new Texture(Constants.BALL_HIT_SPRITE_2)));
+        hitSprites.add(new TextureRegion(new Texture(Constants.BALL_HIT_SPRITE_3)));
+        hitSprites.add(new TextureRegion(new Texture(Constants.BALL_HIT_SPRITE_4)));
+        hitSprites.add(new TextureRegion(new Texture(Constants.BALL_HIT_SPRITE_5)));
+
+        hitAnimation = new Animation(Constants.HIT_BALL_LOOP_DURATION, hitSprites, PlayMode.NORMAL );
 
 
     }
@@ -214,6 +236,7 @@ public class Chun {
             jumpState = JumpState.FALLING;
             if(position.y - Constants.CHUN_EYE_HEIGHT < 0){
                 jumpState = JumpState.GROUNDED;
+                if(done3)done3 = false;
                 collisionChun = HIT.NO;
                 position.y = Constants.CHUN_EYE_HEIGHT;
                 velocity.y = 0;
@@ -221,20 +244,40 @@ public class Chun {
             }
         }
 
+
+
+
+        pcControls(delta);
+        mobileControls(delta);
+        collision();
+        ensureInBounds();
+
+    }
+
+
+    private void pcControls(float delta){
         if(jumpState == JumpState.GROUNDED){
             if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+                if(done2)done2 = false;
                 moveLeft(delta);
             }else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+                if(done2)done2 = false;
                 moveRight(delta);
             }else{
                 if(done)done = false;
                 if(done1)done1 = false;
+                if(!done2){
+                    toStandingStartTime = TimeUtils.nanoTime();
+                    toStandingAnimation.setPlayMode(PlayMode.REVERSED);
+                    done2 = true;
+                }
                 walkState = WalkState.STANDING;
             }
         }
+    }
 
 
-
+    private void mobileControls(float delta){
         if(onMobile()){
             if(jumpState == JumpState.GROUNDED){
                 float tempPositionX = position.x;
@@ -251,17 +294,25 @@ public class Chun {
                 }
             }
         }
+    }
 
 
+
+    private boolean onMobile(){
+        return Gdx.app.getType() == Application.ApplicationType.Android;
+    }
+
+
+    private void collision(){
         //Collie with icicles
         Rectangle chunBounds = new Rectangle(
                 position.x - Constants.CHUN_STANCE_WIDTH / 2,
                 position.y - Constants.CHUN_EYE_HEIGHT,
-                Constants.CHUN_STANCE_WIDTH,
-                Constants.CHUN_HEIGHT
+                Constants.YELLOW_BALL_WIDTH,
+                Constants.YELLOW_BALL_HEIGHT - 3
         );
 
-      /*  if(jumpState == JumpState.GROUNDED){
+       if(jumpState == JumpState.GROUNDED){
             for(Enemy enemy : level.getEnemies().getEnemyList()){
                 Rectangle enemyBounds = new Rectangle(
                         enemy.position.x + 7,
@@ -271,6 +322,10 @@ public class Chun {
                 );
                 if(chunBounds.overlaps(enemyBounds)){
                     collisionChun = HIT.YES;
+                    if(!done3){
+                        hitStartTime = TimeUtils.nanoTime();
+                        done3 = true;
+                    }
                     hits --;
                     if(position.x  < enemy.position.x ){
                         recoilFromEnemy(Direction.LEFT);
@@ -294,31 +349,26 @@ public class Chun {
             }
 
 
-        }*/
+        }
 
-
-        ensureInBounds();
 
     }
-
-    private boolean onMobile(){
-        return Gdx.app.getType() == Application.ApplicationType.Android;
-    }
-
 
 
 
     private void ensureInBounds(){
-        if(position.x - 12 < 0){
-            position.x =  12;
+        if(position.x - 13 < 0){
+            position.x =  13;
         }
-        if(position.x + 13 > viewport.getWorldWidth() ){
-            position.x = viewport.getWorldWidth() - 13;
+        if(position.x  - 5> viewport.getWorldWidth() ){
+            position.x = viewport.getWorldWidth() + 3 ;
         }
         if(position.y + 10 > viewport.getWorldHeight()){
             position.y = viewport.getWorldHeight() - 10;
         }
     }
+
+
 
     private void moveLeft(float delta){
         if(!done){
@@ -334,6 +384,8 @@ public class Chun {
         position.x -= delta * Constants.CHUN_MOVE_SPEED;
     }
 
+
+
     private void moveRight(float delta){
         if(!done){
             toBallStartTime = TimeUtils.nanoTime();
@@ -347,11 +399,16 @@ public class Chun {
         facing = Direction.RIGHT;
         position.x += delta * Constants.CHUN_MOVE_SPEED;
     }
+
+
+
     private void startJump(){
         jumpState = JumpState.JUMPING;
         startJump = TimeUtils.nanoTime();
         continueJump();
     }
+
+
 
     private  void continueJump(){
         if(jumpState == JumpState.JUMPING){
@@ -371,11 +428,22 @@ public class Chun {
     }
 
     private void recoilFromEnemy(Direction direction){
+        Random r = new Random();
+        int tempDirection = r.nextInt(2) + 1;
         velocity.y = Constants.KNOCKBACK_VELOCITY.y;
         if(direction == Direction.LEFT){
-            velocity.x = -Constants.KNOCKBACK_VELOCITY.x;
+            if(tempDirection == 1){
+                velocity.x = -Constants.KNOCKBACK_VELOCITY.x;
+            }else{
+                velocity.x = Constants.KNOCKBACK_VELOCITY.x;
+            }
+
         }else{
-            velocity.x = Constants.KNOCKBACK_VELOCITY.x;
+            if(tempDirection == 1){
+                velocity.x = -Constants.KNOCKBACK_VELOCITY.x;
+            }else{
+                velocity.x = Constants.KNOCKBACK_VELOCITY.x;
+            }
         }
 
     }
@@ -383,28 +451,78 @@ public class Chun {
 
     public void render(SpriteBatch batch){
 
-        if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED && walkState == WalkState.STANDING){
-            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
-            updateBatch = standingAnimationSprites.getKeyFrame(walkTimeSeconds);
-            batch.draw(
-                    updateBatch,
+        if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED
+                && walkState == WalkState.STANDING && collisionChun == HIT.NO){
+            float toStandingSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - toStandingStartTime);
+            if(toStandingAnimation.isAnimationFinished(toStandingSeconds)){
+                toStandingAnimation.setPlayMode(PlayMode.NORMAL);
+                float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
+                updateBatch = standingAnimationSprites.getKeyFrame(walkTimeSeconds);
+                batch.draw(
+                        updateBatch,
+                        position.x - Constants.CHUN_EYE_POSITION.x,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
+                );
+            }else{
+                updateBatch = toStandingAnimation.getKeyFrame(toStandingSeconds);
+                batch.draw(
+                        updateBatch,
+                        position.x - Constants.CHUN_EYE_POSITION.x,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
+                );
+            }
+
+        }else  if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED
+                && walkState == WalkState.STANDING && collisionChun == HIT.NO){
+            float toStandingSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - toStandingStartTime);
+            if(toStandingAnimation.isAnimationFinished(toStandingSeconds)){
+                toStandingAnimation.setPlayMode(PlayMode.NORMAL);
+                float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
+                updateBatch = standingAnimationSprites.getKeyFrame(walkTimeSeconds);
+                batch.draw(
+                        updateBatch,
+                        position.x,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        -Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
+                );
+            }else{
+                updateBatch = toStandingAnimation.getKeyFrame(toStandingSeconds);
+                batch.draw(
+                        updateBatch,
+                        position.x ,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        -Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
+                );
+            }
+
+        }else if(facing == Direction.LEFT && walkState == WalkState.STANDING && collisionChun == HIT.YES){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - hitStartTime);
+             hitBatch = hitAnimation.getKeyFrame(walkTimeSeconds);
+             batch.draw(
+                    hitBatch,
                     position.x - Constants.CHUN_EYE_POSITION.x,
                     position.y - Constants.CHUN_EYE_POSITION.y,
-                    17,
-                    17
+                    Constants.YELLOW_BALL_WIDTH,
+                    Constants.YELLOW_BALL_HEIGHT
             );
-        }else  if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED && walkState == WalkState.STANDING){
-            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
-            updateBatch = standingAnimationSprites.getKeyFrame(walkTimeSeconds);
+        }else if(facing == Direction.RIGHT && walkState == WalkState.STANDING && collisionChun == HIT.YES){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - hitStartTime);
+            hitBatch = hitAnimation.getKeyFrame(walkTimeSeconds);
             batch.draw(
-                    updateBatch,
+                    hitBatch,
                     position.x,
                     position.y - Constants.CHUN_EYE_POSITION.y,
-                    -17,
-                    17
-
+                    -Constants.YELLOW_BALL_WIDTH,
+                    Constants.YELLOW_BALL_HEIGHT
             );
-        }else if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED && walkState == WalkState.WAlKING){
+        }else if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED
+                && walkState == WalkState.WAlKING && collisionChun == HIT.NO){
             float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - toBallStartTime);
             if(toBallAnimation.isAnimationFinished(walkTimeSeconds))done1 = true;
             if(!done1){
@@ -413,8 +531,8 @@ public class Chun {
                         toBallBatch,
                         position.x - Constants.CHUN_EYE_POSITION.x,
                         position.y - Constants.CHUN_EYE_POSITION.y,
-                        17,
-                        17
+                        Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
 
                 );
             }else{
@@ -424,13 +542,14 @@ public class Chun {
                         rollBatch,
                         position.x - Constants.CHUN_EYE_POSITION.x,
                         position.y - Constants.CHUN_EYE_POSITION.y,
-                        17,
-                        17
+                        Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
 
                 );
             }
 
-        }else if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED && walkState == WalkState.WAlKING){
+        }else if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED
+                && walkState == WalkState.WAlKING && collisionChun == HIT.NO){
             float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - toBallStartTime);
             if(toBallAnimation.isAnimationFinished(walkTimeSeconds))done1 = true;
             if(!done1){
@@ -439,8 +558,8 @@ public class Chun {
                         toBallBatch,
                         position.x,
                         position.y - Constants.CHUN_EYE_POSITION.y,
-                        -17,
-                        17
+                        -Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
 
                 );
             }else{
@@ -450,13 +569,31 @@ public class Chun {
                         rollBatch,
                         position.x ,
                         position.y - Constants.CHUN_EYE_POSITION.y,
-                        -17,
-                        17
+                        -Constants.YELLOW_BALL_WIDTH,
+                        Constants.YELLOW_BALL_HEIGHT
 
                 );
             }
-
-
+        }else if(facing == Direction.LEFT && walkState == WalkState.WAlKING && collisionChun == HIT.YES){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - hitStartTime);
+            hitBatch = hitAnimation.getKeyFrame(walkTimeSeconds);
+            batch.draw(
+                    hitBatch,
+                    position.x - Constants.CHUN_EYE_POSITION.x,
+                    position.y - Constants.CHUN_EYE_POSITION.y,
+                    Constants.YELLOW_BALL_WIDTH,
+                    Constants.YELLOW_BALL_HEIGHT
+            );
+        }else if(facing == Direction.RIGHT && walkState == WalkState.WAlKING && collisionChun == HIT.YES){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - hitStartTime);
+            hitBatch = hitAnimation.getKeyFrame(walkTimeSeconds);
+            batch.draw(
+                    hitBatch,
+                    position.x,
+                    position.y - Constants.CHUN_EYE_POSITION.y,
+                    -Constants.YELLOW_BALL_WIDTH,
+                    Constants.YELLOW_BALL_HEIGHT
+            );
         }
 
 
