@@ -37,14 +37,24 @@ public class Chun {
     Texture jumpLeft;
     Texture jumpRight;
     Texture walk;
+
     TextureRegion updateBatch;
+    TextureRegion toBallBatch;
+    TextureRegion rollBatch;
+
+
     Animation walkRigthAnimation;
     Animation walkLeftAnimation;
-    Animation standingAnimation;
-    Animation standingLeftAnimation;
+    Animation standingAnimationSprites;
+    Animation toBallAnimation;
+    Animation rollBallAnimation;
+    Animation hitBallLeftAnimation;
 
     long walkStartime;
     long startJump;
+    private float toBallStartTime;
+    private float rollingStartTime;
+
     Level level;
 
 
@@ -52,6 +62,10 @@ public class Chun {
     Direction facing;
     WalkState walkState;
     HIT collisionChun;
+
+    private Boolean done;
+    private Boolean done1;
+
 
     int hits;
     int score;
@@ -62,49 +76,10 @@ public class Chun {
         this.viewport = viewport;
         this.position = position;
         velocity = new Vector2();
-
-        jumpLeft = new Texture(Constants.JUMP_LEFT);
-        jumpRight = new Texture(Constants.JUMP_RIGHT);
-        walk = new Texture(Constants.WALKING_LEFT_2);
-
-        Array<TextureRegion> walkRightFrames = new Array<TextureRegion>();
-
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_1)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_2)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_3)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_4)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_5)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_6)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_7)));
-        walkRightFrames.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_8)));
-
-        walkRigthAnimation = new Animation(Constants.WALK_LOOP_FRAME_DURATION,walkRightFrames,PlayMode.LOOP);
-
-        Array<TextureRegion> walkLeftFrames = new Array<TextureRegion>();
-
-        walkLeftFrames.add(new TextureRegion(new Texture(Constants.WALKING_LEFT)));
-        walkLeftFrames.add(new TextureRegion(new Texture(Constants.WALKING_LEFT_2)));
-        walkLeftFrames.add(new TextureRegion(new Texture(Constants.WALKING_LEFT_3)));
-        walkLeftAnimation = new Animation(Constants.WALK_LOOP_FRAME_DURATION,walkLeftFrames,PlayMode.LOOP);
-
-        Array<TextureRegion> standingSprites = new Array<TextureRegion>();
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_1)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_2)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_3)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_4)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_5)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_6)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_7)));
-        standingSprites.add(new TextureRegion(new Texture(Constants.FOX_RUNNING_SPRITE_8)));
-        standingAnimation = new Animation(Constants.CHUN_STANDING_LOOP_DURATION,standingSprites,PlayMode.LOOP);
-
-        Array<TextureRegion> standingLeftSprites = new Array<TextureRegion>();
-        standingLeftSprites.add(new TextureRegion(new Texture(Constants.CHUN_STANDING_LEFT_SPRITE_1)));
-        standingLeftSprites.add(new TextureRegion(new Texture(Constants.CHUN_STANDING_LEFT_SPRITE_2)));
-        standingLeftSprites.add(new TextureRegion(new Texture(Constants.CHUN_STANDING_LEFT_SPRITE_3)));
-        standingLeftSprites.add(new TextureRegion(new Texture(Constants.CHUN_STANDING_LEFT_SPRITE_4)));
-        standingLeftAnimation = new Animation(Constants.CHUN_STANDING_LOOP_DURATION,standingLeftSprites,PlayMode.LOOP);
-
+        done = false;
+        done1 = false;
+        walkStartime = TimeUtils.nanoTime();
+        getAnimationFrames();
         init();
 
 
@@ -122,6 +97,115 @@ public class Chun {
     }
 
 
+    private void getAnimationFrames(){
+
+        idleSprites();
+        toBallSprites();
+        ballSprites();
+
+    }
+
+
+    private void idleSprites(){
+        Array<TextureRegion> standingSprites = new Array<TextureRegion>();
+
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_1)));
+        standingSprites.get(0).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_2)));
+        standingSprites.get(1).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_3)));
+        standingSprites.get(2).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_4)));
+        standingSprites.get(3).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_5)));
+        standingSprites.get(4).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_4)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_3)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_2)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_1)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_6)));
+        standingSprites.get(5).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_7)));
+        standingSprites.get(6).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_8)));
+        standingSprites.get(7).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_9)));
+        standingSprites.get(8).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_8)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_7)));
+        standingSprites.add(new TextureRegion(new Texture(Constants.BALL_IDLE_SPRITE_6)));
+
+        standingAnimationSprites = new Animation(Constants.CHUN_STANDING_LOOP_DURATION,standingSprites,PlayMode.LOOP);
+
+
+    }
+
+
+    private void toBallSprites(){
+        Array<TextureRegion> toBallSprites = new Array<TextureRegion>();
+
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_1)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_2)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_3)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_4)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_5)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_6)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_7)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_8)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_9)));
+        toBallSprites.add(new TextureRegion(new Texture(Constants.TO_BALL_SPRITE_10)));
+
+        for(int i = 0; i < toBallSprites.size; i++){
+            toBallSprites.get(i).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+
+        toBallAnimation = new Animation(Constants.TO_BALL_LOOP_DURATION, toBallSprites, PlayMode.NORMAL);
+
+
+
+
+    }
+
+
+
+    private void ballSprites(){
+        Array<TextureRegion> ballSprites=  new Array<TextureRegion>();
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_1)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_2)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_3)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_4)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_5)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_6)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_7)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_8)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_9)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_10)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_11)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_12)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_13)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_14)));
+        ballSprites.add(new TextureRegion(new Texture(Constants.ROLL_SPRITE_15)));
+
+        for(int i = 0 ; i < ballSprites.size; i++){
+            ballSprites.get(i).getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+
+        rollBallAnimation = new Animation(Constants.ROLL_BALL_LOOP_ANIMATION, ballSprites, PlayMode.LOOP);
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
     public void update(float delta){
         velocity.y -=Constants.GRAVITATIONAL_ACCELERATION;
         position.mulAdd(velocity, delta);
@@ -137,15 +221,18 @@ public class Chun {
             }
         }
 
+        if(jumpState == JumpState.GROUNDED){
+            if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+                moveLeft(delta);
+            }else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+                moveRight(delta);
+            }else{
+                if(done)done = false;
+                if(done1)done1 = false;
+                walkState = WalkState.STANDING;
+            }
+        }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-            moveLeft(delta);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-            moveRight(delta);
-        }else{
-            walkState = WalkState.STANDING;
-        }
 
 
         if(onMobile()){
@@ -173,7 +260,8 @@ public class Chun {
                 Constants.CHUN_STANCE_WIDTH,
                 Constants.CHUN_HEIGHT
         );
-        if(jumpState == JumpState.GROUNDED){
+
+      /*  if(jumpState == JumpState.GROUNDED){
             for(Enemy enemy : level.getEnemies().getEnemyList()){
                 Rectangle enemyBounds = new Rectangle(
                         enemy.position.x + 7,
@@ -206,7 +294,7 @@ public class Chun {
             }
 
 
-        }
+        }*/
 
 
         ensureInBounds();
@@ -233,14 +321,28 @@ public class Chun {
     }
 
     private void moveLeft(float delta){
-        walkStartime = TimeUtils.nanoTime();
+        if(!done){
+            toBallStartTime = TimeUtils.nanoTime();
+            done = true;
+        }
+        if(!done1){
+            rollingStartTime = TimeUtils.nanoTime();
+        }
+
         walkState = WalkState.WAlKING;
         facing = Direction.LEFT;
         position.x -= delta * Constants.CHUN_MOVE_SPEED;
     }
 
     private void moveRight(float delta){
-        walkStartime = TimeUtils.nanoTime();
+        if(!done){
+            toBallStartTime = TimeUtils.nanoTime();
+            done = true;
+        }
+        if(!done1){
+            rollingStartTime = TimeUtils.nanoTime();
+        }
+
         walkState = WalkState.WAlKING;
         facing = Direction.RIGHT;
         position.x += delta * Constants.CHUN_MOVE_SPEED;
@@ -277,72 +379,96 @@ public class Chun {
         }
 
     }
+
+
     public void render(SpriteBatch batch){
 
+        if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED && walkState == WalkState.STANDING){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
+            updateBatch = standingAnimationSprites.getKeyFrame(walkTimeSeconds);
+            batch.draw(
+                    updateBatch,
+                    position.x - Constants.CHUN_EYE_POSITION.x,
+                    position.y - Constants.CHUN_EYE_POSITION.y,
+                    17,
+                    17
+            );
+        }else  if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED && walkState == WalkState.STANDING){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
+            updateBatch = standingAnimationSprites.getKeyFrame(walkTimeSeconds);
+            batch.draw(
+                    updateBatch,
+                    position.x,
+                    position.y - Constants.CHUN_EYE_POSITION.y,
+                    -17,
+                    17
 
-               if (facing == Direction.RIGHT && jumpState == JumpState.GROUNDED && walkState == WalkState.STANDING ) {
-                   float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
-                   updateBatch = standingAnimation.getKeyFrame(walkTimeSeconds);
-                   batch.draw(
-                           updateBatch,
-                           position.x - Constants.CHUN_EYE_POSITION.x,
-                           position.y - Constants.CHUN_EYE_POSITION.y,
-                           updateBatch.getRegionWidth(),
-                           updateBatch.getRegionHeight()
-                   );
-               } else if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED && walkState == WalkState.WAlKING ){
-                   float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
-                   updateBatch = walkRigthAnimation.getKeyFrame(walkTimeSeconds);
-                   Gdx.app.log(TAG, "RIght");
-                   batch.draw(
-                           updateBatch,
-                           position.x - Constants.CHUN_EYE_POSITION.x,
-                           position.y - Constants.CHUN_EYE_POSITION.y,
-                           updateBatch.getRegionWidth(),
-                           updateBatch.getRegionHeight()
-                   );
-               }else if(facing == Direction.RIGHT && jumpState != JumpState.GROUNDED){
-                   jumpUpdate = jumpRight;
-                   batch.draw(
-                           jumpUpdate,
-                           position.x - Constants.CHUN_EYE_POSITION.x,
-                           position.y - Constants.CHUN_EYE_POSITION.y,
-                           jumpUpdate.getWidth(),
-                           jumpUpdate.getHeight()
-                   );
-               } else if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED && walkState == WalkState.STANDING) {
-                   float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
-                   updateBatch = standingLeftAnimation.getKeyFrame(walkTimeSeconds);
-                   batch.draw(
-                           updateBatch,
-                           position.x - Constants.CHUN_EYE_POSITION.x,
-                           position.y - Constants.CHUN_EYE_POSITION.y,
-                           updateBatch.getRegionWidth(),
-                           updateBatch.getRegionHeight()
-                   );
-               }else if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED && walkState == WalkState.WAlKING) {
-                   float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - walkStartime);
-                   updateBatch = walkLeftAnimation.getKeyFrame(walkTimeSeconds);
-                   batch.draw(
-                           updateBatch,
-                           position.x - Constants.CHUN_EYE_POSITION.x,
-                           position.y - Constants.CHUN_EYE_POSITION.y,
-                           updateBatch.getRegionWidth(),
-                           updateBatch.getRegionHeight()
-                   );
-               }else if(facing == Direction.LEFT && jumpState != JumpState.GROUNDED ){
-                   jumpUpdate = jumpLeft;
-                   batch.draw(
-                           jumpUpdate,
-                           position.x - Constants.CHUN_EYE_POSITION.x,
-                           position.y - Constants.CHUN_EYE_POSITION.y,
-                           jumpUpdate.getWidth(),
-                           jumpUpdate.getHeight()
-                   );
-               }
+            );
+        }else if(facing == Direction.LEFT && jumpState == JumpState.GROUNDED && walkState == WalkState.WAlKING){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - toBallStartTime);
+            if(toBallAnimation.isAnimationFinished(walkTimeSeconds))done1 = true;
+            if(!done1){
+                toBallBatch = toBallAnimation.getKeyFrame(walkTimeSeconds);
+                batch.draw(
+                        toBallBatch,
+                        position.x - Constants.CHUN_EYE_POSITION.x,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        17,
+                        17
+
+                );
+            }else{
+               float rollStartTime = MathUtils.nanoToSec * (TimeUtils.nanoTime() - rollingStartTime);
+                rollBatch = rollBallAnimation.getKeyFrame(rollStartTime);
+                batch.draw(
+                        rollBatch,
+                        position.x - Constants.CHUN_EYE_POSITION.x,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        17,
+                        17
+
+                );
+            }
+
+        }else if(facing == Direction.RIGHT && jumpState == JumpState.GROUNDED && walkState == WalkState.WAlKING){
+            float walkTimeSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - toBallStartTime);
+            if(toBallAnimation.isAnimationFinished(walkTimeSeconds))done1 = true;
+            if(!done1){
+                toBallBatch = toBallAnimation.getKeyFrame(walkTimeSeconds);
+                batch.draw(
+                        toBallBatch,
+                        position.x,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        -17,
+                        17
+
+                );
+            }else{
+                float rollStartTime = MathUtils.nanoToSec * (TimeUtils.nanoTime() - rollingStartTime);
+                rollBatch = rollBallAnimation.getKeyFrame(rollStartTime);
+                batch.draw(
+                        rollBatch,
+                        position.x ,
+                        position.y - Constants.CHUN_EYE_POSITION.y,
+                        -17,
+                        17
+
+                );
+            }
+
+
+        }
+
+
+
+
+
 
 
     }
+
+
+
 
     public void dispose(){
          jumpUpdate.dispose();

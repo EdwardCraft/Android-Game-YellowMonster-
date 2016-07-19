@@ -42,14 +42,17 @@ public class Constants {
     // Chun
     public static final Vector2 CHUN_EYE_POSITION = new Vector2(16, 24);
     public static final int CHUN_LIVES = 3;
-    public static final float WALK_LOOP_FRAME_DURATION = 0.01f;
+    public static final float WALK_LOOP_FRAME_DURATION = 0.09f;
     public static final float CHUN_EYE_HEIGHT = 24.0f;
     public static final float CHUN_STANCE_WIDTH = 21.0f;
     public static final float CHUN_HEIGHT = 23.0f;
-    public static final float CHUN_MOVE_SPEED =  250;
+    public static final float CHUN_MOVE_SPEED =  150;
     public static final float MAX_JUMP_DURATiON = .1f;
     public static final float JUMP_SPEED = 1.5f * WOLRD_SIZE;
-    public static final float CHUN_STANDING_LOOP_DURATION = .4f;
+    public static final float CHUN_STANDING_LOOP_DURATION = 0.05f;
+    public static final float TO_BALL_LOOP_DURATION = 0.05f;
+    public static final float ROLL_BALL_LOOP_ANIMATION = 0.05f;
+    public static final float HIT_BALL_LOOP_DURATION = 0.4f;
 
     // Enemy
 
@@ -110,6 +113,62 @@ public class Constants {
     public static final String FOX_RUNNING_SPRITE_6 = "running right/fox-walking-right-6.png";
     public static final String FOX_RUNNING_SPRITE_7 = "running right/fox-walking-right-7.png";
     public static final String FOX_RUNNING_SPRITE_8 = "running right/fox-walking-right-8.png";
+
+    //idle
+    public static final String BALL_IDLE_SPRITE_1 = "ilde/yellow-1.png";
+    public static final String BALL_IDLE_SPRITE_2 = "ilde/yellow-2.png";
+    public static final String BALL_IDLE_SPRITE_3 = "ilde/yellow-3.png";
+    public static final String BALL_IDLE_SPRITE_4 = "ilde/yellow-4.png";
+    public static final String BALL_IDLE_SPRITE_5 = "ilde/yellow-5.png";
+    public static final String BALL_IDLE_SPRITE_6 = "ilde/yellow-6.png";
+    public static final String BALL_IDLE_SPRITE_7 = "ilde/yellow-7.png";
+    public static final String BALL_IDLE_SPRITE_8 = "ilde/yellow-8.png";
+    public static final String BALL_IDLE_SPRITE_9 = "ilde/yellow-9.png";
+
+
+    //toBall
+    public static final String TO_BALL_SPRITE_1 = "toRoll/toRoll-1.png";
+    public static final String TO_BALL_SPRITE_2 = "toRoll/toRoll-2.png";
+    public static final String TO_BALL_SPRITE_3 = "toRoll/toRoll-3.png";
+    public static final String TO_BALL_SPRITE_4 = "toRoll/toRoll-4.png";
+    public static final String TO_BALL_SPRITE_5 = "toRoll/toRoll-5.png";
+    public static final String TO_BALL_SPRITE_6 = "toRoll/toRoll-6.png";
+    public static final String TO_BALL_SPRITE_7 = "toRoll/toRoll-7.png";
+    public static final String TO_BALL_SPRITE_8 = "toRoll/toRoll-8.png";
+    public static final String TO_BALL_SPRITE_9 = "toRoll/toRoll-9.png";
+    public static final String TO_BALL_SPRITE_10 = "toRoll/toRoll-10.png";
+
+
+    //Roll
+    public static final String ROLL_SPRITE_1 = "roll/roll-1.png";
+    public static final String ROLL_SPRITE_2 = "roll/roll-2.png";
+    public static final String ROLL_SPRITE_3 = "roll/roll-3.png";
+    public static final String ROLL_SPRITE_4 = "roll/roll-4.png";
+    public static final String ROLL_SPRITE_5 = "roll/roll-5.png";
+    public static final String ROLL_SPRITE_6 = "roll/roll-6.png";
+    public static final String ROLL_SPRITE_7 = "roll/roll-7.png";
+    public static final String ROLL_SPRITE_8 = "roll/roll-8.png";
+    public static final String ROLL_SPRITE_9 = "roll/roll-9.png";
+    public static final String ROLL_SPRITE_10 = "roll/roll-10.png";
+    public static final String ROLL_SPRITE_11 = "roll/roll-11.png";
+    public static final String ROLL_SPRITE_12 = "roll/roll-12.png";
+    public static final String ROLL_SPRITE_13 = "roll/roll-13.png";
+    public static final String ROLL_SPRITE_14 = "roll/roll-14.png";
+    public static final String ROLL_SPRITE_15 = "roll/roll-15.png";
+
+    //hit
+    public static final String BALL_HIT_SPRITE_1 = "hit/hit-1.png";
+    public static final String BALL_HIT_SPRITE_2 = "hit/hit-2.png";
+    public static final String BALL_HIT_SPRITE_3 = "hit/hit-3.png";
+    public static final String BALL_HIT_SPRITE_4 = "hit/hit-4.png";
+    public static final String BALL_HIT_SPRITE_5 = "hit/hit-5.png";
+
+
+
+
+
+
+
 
     public enum Difficulty{
         EASY(EASY_SPAWNS_PER_SECOND, EASY_LABEL),
