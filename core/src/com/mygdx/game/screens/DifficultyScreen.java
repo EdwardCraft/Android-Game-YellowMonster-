@@ -1,5 +1,6 @@
 package com.mygdx.game.screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
@@ -35,10 +36,18 @@ public class DifficultyScreen extends InputAdapter implements Screen{
     ExtendViewport viewportExtended;
     BitmapFont font;
     Texture background;
+    Texture gameTitle;
     Texture ice;
     Animation standingAnimationSprites;
     TextureRegion chun;
     float startTime;
+
+    int easy_score;
+    int normal_score;
+    int hard_score;
+
+    boolean toggle;
+
     public DifficultyScreen(DogeMania dogeMania){
         this.dogeMania = dogeMania;
     }
@@ -46,6 +55,7 @@ public class DifficultyScreen extends InputAdapter implements Screen{
 
     @Override
     public void show() {
+
         renderer = new ShapeRenderer();
         batch = new SpriteBatch();
         viewport = new FitViewport(Constants.DIFFICULTY_WORLD_SIZE, Constants.DIFFICULTY_WORLD_SIZE);
@@ -56,15 +66,26 @@ public class DifficultyScreen extends InputAdapter implements Screen{
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         background =new Texture(Constants.BETA_LEVEL_1);
         background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        gameTitle = new Texture("sprites/game-title.png");
+        gameTitle.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         ice = new Texture(Constants.ICICLES_SPRITE_1);
         ice.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        toggle = false;
         getSpritesYellowBall();
-
-
+        getScore();
 
 
         startTime = TimeUtils.nanoTime();
     }
+
+    private void getScore(){
+
+        easy_score = dogeMania.save.getInteger(Constants.HIGH_SCORE_EASY, 0);
+        normal_score = dogeMania.save.getInteger(Constants.HIGH_SCORE_NORMAL, 0);
+        hard_score = dogeMania.save.getInteger(Constants.HIGH_SCORE_HARD, 0);
+
+    }
+
 
 
     private void getSpritesYellowBall(){
@@ -100,9 +121,14 @@ public class DifficultyScreen extends InputAdapter implements Screen{
     }
 
 
+    private void update(float delta){
+
+    }
+
+
     @Override
     public void render(float delta) {
-
+        update(delta);
         viewportExtended.apply();
         Gdx.gl.glClearColor(Constants.BACKGRAOUND_COLOR.r, Constants.BACKGRAOUND_COLOR.g,
                 Constants.BACKGRAOUND_COLOR.b, 1);
@@ -124,6 +150,13 @@ public class DifficultyScreen extends InputAdapter implements Screen{
                 Constants.BACKGROUND_WIDTH,
                 Constants.BACKGROUND_HEIGHT
         );
+        batch.draw(gameTitle,
+                (viewportExtended.getWorldWidth() / 2) - 75,
+                (viewportExtended.getWorldHeight() / 2)  + 30,
+                150f, 50f
+                );
+
+
         float timeInSeconds = MathUtils.nanoToSec * (TimeUtils.nanoTime() - startTime);
         chun = standingAnimationSprites.getKeyFrame(timeInSeconds);
         batch.draw(
@@ -156,16 +189,23 @@ public class DifficultyScreen extends InputAdapter implements Screen{
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin();
         final GlyphLayout easyLayout = new GlyphLayout(font, Constants.EASY_LABEL);
-        font.draw(batch, Constants.EASY_LABEL, Constants.EASY_CENTER.x,
+        font.draw(batch, Constants.EASY_LABEL , Constants.EASY_CENTER.x,
                 Constants.EASY_CENTER.y + easyLayout.height / 2, 0, Align.center, false);
+        font.draw(batch, Integer.toString(easy_score), Constants.EASY_CENTER.x,
+                Constants.EASY_CENTER.y + (easyLayout.height / 2) - 40, 0, Align.center, false);
 
         final GlyphLayout mediumLayout = new GlyphLayout(font, Constants.MEDIUM_LABEL);
         font.draw(batch, Constants.MEDIUM_LABEL, Constants.MEDIUM_CENTER.x,
                 Constants.MEDIUM_CENTER.y + mediumLayout.height / 2, 0, Align.center, false);
+        font.draw(batch, Integer.toString(normal_score), Constants.MEDIUM_CENTER.x,
+                Constants.MEDIUM_CENTER.y  + (easyLayout.height / 2) - 40, 0, Align.center, false);
 
         final GlyphLayout hardLayout = new GlyphLayout(font, Constants.HARD_LEBEL);
         font.draw(batch, Constants.HARD_LEBEL, Constants.HARD_CENTER.x,
                 Constants.HARD_CENTER.y + hardLayout.height / 2, 0, Align.center, false);
+        font.draw(batch, Integer.toString(hard_score), Constants.HARD_CENTER.x,
+                Constants.HARD_CENTER.y + (easyLayout.height / 2) - 40, 0, Align.center, false);
+
         batch.end();
 
 
@@ -196,6 +236,7 @@ public class DifficultyScreen extends InputAdapter implements Screen{
         renderer.dispose();
         ice.dispose();
         background.dispose();
+        gameTitle.dispose();
 
     }
 
@@ -206,6 +247,7 @@ public class DifficultyScreen extends InputAdapter implements Screen{
         renderer.dispose();
         ice.dispose();
         background.dispose();
+        gameTitle.dispose();
 
     }
 
@@ -217,15 +259,35 @@ public class DifficultyScreen extends InputAdapter implements Screen{
 
         if(worldTouch.dst(Constants.EASY_CENTER) < Constants.DIFFICULTY_BUBBLE_RADIUS){
             dogeMania.showDogeScreen(Constants.Difficulty.EASY);
+            //checkHandler();
         }
         if(worldTouch.dst(Constants.MEDIUM_CENTER) < Constants.DIFFICULTY_BUBBLE_RADIUS){
-            dogeMania.showDogeScreen(Constants.Difficulty.HARD);
+            dogeMania.showDogeScreen(Constants.Difficulty.MEDIUM);
+            //checkHandler();
         }
         if(worldTouch.dst(Constants.HARD_CENTER ) < Constants.DIFFICULTY_BUBBLE_RADIUS){
             dogeMania.showDogeScreen(Constants.Difficulty.HARD);
+            //checkHandler();
         }
+
 
 
         return true;
     }
+
+
+    private void checkHandler(){
+        if(onMobile())
+            if(!toggle){
+                dogeMania.handler.showAds(true);
+                toggle = true;
+            }
+    }
+
+    private boolean onMobile(){
+        return Gdx.app.getType() == Application.ApplicationType.Android;
+    }
+
+
+
 }

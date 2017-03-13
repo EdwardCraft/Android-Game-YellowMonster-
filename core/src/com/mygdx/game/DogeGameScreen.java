@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
@@ -30,7 +31,7 @@ public class DogeGameScreen extends InputAdapter implements Screen {
     ExtendViewport hudViewPort;
     BitmapFont font;
     ChunHud chunHud;
-
+    boolean toggle;
 
     public DogeGameScreen(DogeMania dogeMania, Difficulty difficulty){
         this.difficulty = difficulty;
@@ -46,6 +47,7 @@ public class DogeGameScreen extends InputAdapter implements Screen {
         chunHud = new ChunHud(hudViewPort,font);
         viewport = new ExtendViewport(Constants.WOLRD_SIZE ,Constants.WOLRD_SIZE);
         level = new Level(viewport,difficulty);
+        toggle = false;
         Gdx.input.setInputProcessor(this);
 
     }
@@ -75,9 +77,44 @@ public class DogeGameScreen extends InputAdapter implements Screen {
         batch.end();
 
         if(level.getChun().getHits() == 0){
+            setScore();
             dogeMania.showDifficultyScreen();
         }
     }
+
+    private void setScore(){
+        switch (difficulty){
+            case EASY:
+                if(level.getChun().getScore() > dogeMania.save.getInteger(Constants.HIGH_SCORE_EASY, 0))
+                    dogeMania.save.putInteger(Constants.HIGH_SCORE_EASY, level.getChun().getScore());
+                break;
+            case MEDIUM:
+                if(level.getChun().getScore() > dogeMania.save.getInteger(Constants.HIGH_SCORE_NORMAL, 0))
+                    dogeMania.save.putInteger(Constants.HIGH_SCORE_NORMAL, level.getChun().getScore());
+                break;
+            case HARD:
+                if(level.getChun().getScore() > dogeMania.save.getInteger(Constants.HIGH_SCORE_HARD, 0))
+                    dogeMania.save.putInteger(Constants.HIGH_SCORE_HARD, level.getChun().getScore());
+                break;
+            default: break;
+        }
+        checkHandler();
+        dogeMania.save.flush();
+    }
+
+
+    private void checkHandler(){
+        if(onMobile())
+            if(!toggle){
+                dogeMania.handler.showAds(true);
+                toggle = true;
+            }
+    }
+
+    private boolean onMobile(){
+        return Gdx.app.getType() == Application.ApplicationType.Android;
+    }
+
 
     @Override
     public void resize (int width, int height) {
@@ -114,6 +151,7 @@ public class DogeGameScreen extends InputAdapter implements Screen {
 
     @Override
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+        setScore();
         dogeMania.showDifficultyScreen();
         return true;
     }

@@ -27,7 +27,8 @@ public class ChunHud {
     public void render(SpriteBatch batch, int lives, int score){
         String hudString = Constants.HUD_SCORE_LEBEl + score + "\n";
         font.getData().setScale(.13f);
-        font.draw(batch, hudString, Constants.HUD_MARGIN, viewport.getWorldHeight() - Constants.HUD_MARGIN);
+        font.draw(batch, hudString, viewport.getWorldWidth() - 125,
+                viewport.getWorldHeight() - (Constants.HUD_MARGIN * 2) - 10);
         for(int i = 1; i <= lives; i++){
            Vector2 drawPosition = new Vector2(
                     viewport.getWorldWidth() - i * (Constants.HUD_MARGIN / 2 + Constants.HUD_SPRITE_SIZE),

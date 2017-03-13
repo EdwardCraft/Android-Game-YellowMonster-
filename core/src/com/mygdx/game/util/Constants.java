@@ -13,9 +13,16 @@ public class Constants {
     public static final float WOLRD_SIZE = 150;
     public static final float STARTING_POINT = 50f;
 
+    //Save
+    public static final String PREF_NAME = "com.mygdx.game.yellow.monster.save";
+    public static final String HIGH_SCORE_HARD = "highscore-hard";
+    public static final String HIGH_SCORE_NORMAL = "highscore-normal";
+    public static final String HIGH_SCORE_EASY = "highscore-easy";
+
+
     //Beta
-    public static final float BACKGROUND_WIDTH = 228 + 25;
-    public static final float BACKGROUND_HEIGHT = 128 + 25;
+    public static final float BACKGROUND_WIDTH = 228 + 50;
+    public static final float BACKGROUND_HEIGHT = 128 + 40;
 
 
     //HUD
@@ -34,15 +41,15 @@ public class Constants {
 
 
     //DIFFICULTY SCREEN
-    public static final Color EASY_COLOR = Color.CORAL;
-    public static final Color MEDIUM_COLOR = Color.FOREST;
-    public static final Color HARD_COLOR = Color.MAGENTA;
+    public static final Color EASY_COLOR = Color.WHITE;
+    public static final Color MEDIUM_COLOR = Color.BLUE;;
+    public static final Color HARD_COLOR = Color.NAVY;
     public static final float DIFFICULTY_WORLD_SIZE = 480.0f;
-    public static final float DIFFICULTY_BUBBLE_RADIUS = DIFFICULTY_WORLD_SIZE / 9;
+    public static final float DIFFICULTY_BUBBLE_RADIUS = DIFFICULTY_WORLD_SIZE / 7;
     public static final float DIFFICULTY_lABEL_SCALE = .15f;
-    public static final Vector2 EASY_CENTER = new Vector2(DIFFICULTY_WORLD_SIZE / 4, DIFFICULTY_WORLD_SIZE / 2);
+    public static final Vector2 EASY_CENTER = new Vector2(DIFFICULTY_WORLD_SIZE / 7, DIFFICULTY_WORLD_SIZE / 2);
     public static final Vector2 MEDIUM_CENTER = new Vector2(DIFFICULTY_WORLD_SIZE / 2, DIFFICULTY_WORLD_SIZE / 2);
-    public static final Vector2 HARD_CENTER = new Vector2(DIFFICULTY_WORLD_SIZE * 3 / 4, DIFFICULTY_WORLD_SIZE / 2);
+    public static final Vector2 HARD_CENTER = new Vector2(DIFFICULTY_WORLD_SIZE - 70, DIFFICULTY_WORLD_SIZE / 2);
 
 
     // Chun
